@@ -1,0 +1,6 @@
+{
+  "name": "24/7 Mart",
+  "description": "Modern 24/7 convenience and grocery store e-commerce platform with real-time order tracking and comprehensive admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
