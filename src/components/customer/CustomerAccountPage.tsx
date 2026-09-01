@@ -4,7 +4,6 @@ import {
   MapPin,
   Heart,
   Package,
-  Shield,
   Save,
   CheckCircle2,
   Mail,
@@ -17,13 +16,11 @@ import { useStore } from '../../context/StoreContext';
 interface CustomerAccountPageProps {
   onNavigateOrders: () => void;
   onNavigateWishlist: () => void;
-  onNavigateAdmin: () => void;
 }
 
 export const CustomerAccountPage: React.FC<CustomerAccountPageProps> = ({
   onNavigateOrders,
   onNavigateWishlist,
-  onNavigateAdmin,
 }) => {
   const { user, setUser, wishlist, orders, showToast } = useStore();
 
@@ -280,24 +277,6 @@ export const CustomerAccountPage: React.FC<CustomerAccountPageProps> = ({
                 <input type="checkbox" defaultChecked className="rounded text-emerald-600 accent-emerald-600" />
                 <span>Notify me when flash deals and midnight discounts launch</span>
               </label>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-sm flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-emerald-400" />
-                  <span>Store Staff & Admin Portal</span>
-                </h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  Are you a store manager or fulfillment staff?
-                </p>
-              </div>
-              <button
-                onClick={onNavigateAdmin}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-xl transition-colors shrink-0"
-              >
-                Go to Admin Portal
-              </button>
             </div>
           </div>
         )}

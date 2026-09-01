@@ -36,14 +36,6 @@ interface UserProfile {
   address: DeliveryAddress;
 }
 
-interface AdminUser {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  avatar?: string;
-}
-
 interface StoreContextType {
   products: Product[];
   categories: Category[];
@@ -57,7 +49,6 @@ interface StoreContextType {
   appliedPromoCode: string;
   selectedLocation: { label: string; address: string };
   user: UserProfile;
-  adminUser: AdminUser | null;
   isCartOpen: boolean;
   isSearchOpen: boolean;
   isLocationModalOpen: boolean;
@@ -139,10 +130,6 @@ interface StoreContextType {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   removeToast: (id: string) => void;
   setUser: (user: UserProfile) => void;
-
-  // Admin Actions
-  adminLogin: (email: string, pass: string) => Promise<boolean>;
-  adminLogout: () => void;
   addProduct: (productData: Partial<Product>) => Promise<Product>;
   updateProduct: (id: string, productData: Partial<Product>) => Promise<Product>;
   deleteProduct: (id: string) => Promise<void>;
@@ -208,15 +195,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return saved ? JSON.parse(saved) : DEFAULT_USER;
     } catch {
       return DEFAULT_USER;
-    }
-  });
-
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(() => {
-    try {
-      const saved = localStorage.getItem('247mart_admin');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
     }
   });
 
@@ -441,18 +419,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.error(e);
     }
   }, [user]);
-
-  useEffect(() => {
-    try {
-      if (adminUser) {
-        localStorage.setItem('247mart_admin', JSON.stringify(adminUser));
-      } else {
-        localStorage.removeItem('247mart_admin');
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [adminUser]);
 
   // Toast System
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'success') => {
@@ -780,41 +746,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Admin Functions
-  const adminLogin = async (email: string, pass: string): Promise<boolean> => {
-    try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password: pass }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAdminUser(data.user);
-        showToast('Welcome back, Store Admin!', 'success');
-        return true;
-      }
-    } catch {
-      if (email === 'admin@247mart.com' && pass === 'admin123') {
-        const adm: AdminUser = {
-          id: 'adm-01',
-          name: 'Store Manager',
-          email: 'admin@247mart.com',
-          role: 'ADMIN',
-        };
-        setAdminUser(adm);
-        showToast('Welcome back, Store Admin!', 'success');
-        return true;
-      }
-    }
-    showToast('Invalid credentials. Use admin@247mart.com / admin123', 'error');
-    return false;
-  };
-
-  const adminLogout = () => {
-    setAdminUser(null);
-    showToast('Logged out of Admin Portal', 'info');
-  };
-
   const addProduct = async (productData: Partial<Product>): Promise<Product> => {
     const res = await fetch('/api/products', {
       method: 'POST',
@@ -989,7 +920,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         appliedPromoCode,
         selectedLocation,
         user,
-        adminUser,
         isCartOpen,
         isSearchOpen,
         isLocationModalOpen,
@@ -1043,8 +973,6 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         showToast,
         removeToast,
         setUser,
-        adminLogin,
-        adminLogout,
         addProduct,
         updateProduct,
         deleteProduct,

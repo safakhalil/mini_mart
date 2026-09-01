@@ -23,20 +23,8 @@ import { OrderTrackingPage } from './components/customer/OrderTrackingPage';
 import { CustomerAccountPage } from './components/customer/CustomerAccountPage';
 import { WishlistPage } from './components/customer/WishlistPage';
 
-// Admin Pages
-import { AdminLayout } from './components/admin/AdminLayout';
-import { AdminLoginPage } from './components/admin/AdminLoginPage';
-import { AdminOverview } from './components/admin/AdminOverview';
-import { AdminProducts } from './components/admin/AdminProducts';
-import { AdminInventory } from './components/admin/AdminInventory';
-import { AdminOrders } from './components/admin/AdminOrders';
-import { AdminCustomers } from './components/admin/AdminCustomers';
-import { AdminAnalytics } from './components/admin/AdminAnalytics';
-import { AdminPromotions } from './components/admin/AdminPromotions';
-import { AdminSettings } from './components/admin/AdminSettings';
-
 const MainApp: React.FC = () => {
-  const { adminUser, orders } = useStore();
+  const { orders } = useStore();
 
   // Navigation State
   const [currentRoute, setCurrentRoute] = useState<string>('home');
@@ -46,9 +34,6 @@ const MainApp: React.FC = () => {
     orderId?: string;
     searchQuery?: string;
   }>({});
-
-  // Admin sub-tab state
-  const [adminTab, setAdminTab] = useState<string>('overview');
 
   // Modals
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -79,40 +64,7 @@ const MainApp: React.FC = () => {
     navigateTo('order-confirmation', { orderId });
   };
 
-  // If in Admin Section
-  if (currentRoute === 'admin-login') {
-    return (
-      <AdminLoginPage onBackToCustomer={() => navigateTo('home')} />
-    );
-  }
 
-  if (currentRoute === 'admin') {
-    if (!adminUser) {
-      return (
-        <AdminLoginPage onBackToCustomer={() => navigateTo('home')} />
-      );
-    }
-
-    return (
-      <AdminLayout
-        currentTab={adminTab}
-        onTabChange={(tab) => setAdminTab(tab)}
-        onSwitchToCustomer={() => navigateTo('home')}
-      >
-        {adminTab === 'overview' && (
-          <AdminOverview onNavigateTab={(t) => setAdminTab(t)} />
-        )}
-        {adminTab === 'products' && <AdminProducts />}
-        {adminTab === 'inventory' && <AdminInventory />}
-        {adminTab === 'orders' && <AdminOrders />}
-        {adminTab === 'customers' && <AdminCustomers />}
-        {adminTab === 'analytics' && <AdminAnalytics />}
-        {adminTab === 'promotions' && <AdminPromotions />}
-        {adminTab === 'settings' && <AdminSettings />}
-        <ToastContainer />
-      </AdminLayout>
-    );
-  }
 
   // Customer Experience
   return (
@@ -196,7 +148,6 @@ const MainApp: React.FC = () => {
               }
             }}
             onNavigateWishlist={() => navigateTo('wishlist')}
-            onNavigateAdmin={() => navigateTo('admin')}
           />
         )}
 

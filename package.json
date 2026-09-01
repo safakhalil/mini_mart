@@ -4,19 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "vite",
+    "api": "node --loader tsx server.ts",
     "build": "vite build",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "seed": "tsx seed-supabase.ts",
-    "setup-db": "tsx setup-database.ts"
+    "seed": "node --loader tsx seed-supabase.ts",
+    "setup-db": "node --loader tsx setup-database.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
     "@supabase/supabase-js": "^2.112.4",
-    "@tailwindcss/vite": "^4.1.14",
     "@types/canvas-confetti": "^1.9.0",
     "@vitejs/plugin-react": "^5.0.4",
     "canvas-confetti": "^1.9.4",
@@ -34,7 +34,8 @@
     "@types/node": "^26.2.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
-    "tailwindcss": "^4.1.14",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2"
   }

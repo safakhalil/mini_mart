@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { db } from './src/lib/database';
 import { Product, Order, Promotion, Customer, StoreSettings, Review } from './src/types';
 import {
@@ -20,7 +19,7 @@ let products: Product[] = [...INITIAL_PRODUCTS];
 let orders: Order[] = [...INITIAL_ORDERS];
 let promotions: Promotion[] = [...INITIAL_PROMOTIONS];
 let customers: Customer[] = [...INITIAL_CUSTOMERS];
-let storeSettings: StoreSettings = { ...INITIAL_SETTINGS };
+let storeSettings: StoreSettings = { ...INITIAL_SETTINGS, adminPin: '1234' };
 let reviews: Review[] = [...INITIAL_REVIEWS];
 
 async function startServer() {
@@ -773,34 +772,42 @@ async function startServer() {
     }
   });
 
-  // Admin Auth simulated endpoint
-  app.post('/api/admin/login', (req, res) => {
-    const { email, password } = req.body;
-    if (email === 'admin@247mart.com' && password === 'admin123') {
-      res.json({
+  // Protected Admin Route
+  app.get('/admin@BK', (req, res) => {
+    const validSecretKey = process.env.ADMIN_SECRET_KEY || 'BK-ADMIN-SECRET-2024';
+    const providedSecret = req.query.secret || req.headers['x-admin-secret'];
+    
+    // Check for secret key authentication
+    if (providedSecret === validSecretKey) {
+      return res.json({
         success: true,
-        user: {
-          id: 'adm-01',
-          name: 'Store Manager',
-          email: 'admin@247mart.com',
-          role: 'ADMIN',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-        },
-        token: 'admin-jwt-token-247mart',
+        message: 'Access granted via secret key',
+        authenticated: true,
+        method: 'secret_key'
       });
-    } else {
-      res.status(401).json({ error: 'Invalid email or password. Use admin@247mart.com / admin123' });
     }
+    
+    // Check for admin role authentication (would need session/token validation in production)
+    const userRole = req.headers['x-user-role'];
+    if (userRole === 'admin') {
+      return res.json({
+        success: true,
+        message: 'Access granted via admin role',
+        authenticated: true,
+        method: 'admin_role'
+      });
+    }
+    
+    // Access denied
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Valid admin role or secret key required.',
+      authenticated: false
+    });
   });
 
-  // Vite middleware for development
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
+  // Serve static files from dist in production
+  if (process.env.NODE_ENV === 'production') {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
@@ -809,7 +816,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`24/7 Mart Server running on http://0.0.0.0:${PORT}`);
+    console.log(`24/7 Mart API Server running on http://0.0.0.0:${PORT}`);
   });
 }
 

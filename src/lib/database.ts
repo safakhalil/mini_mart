@@ -135,9 +135,9 @@ export const db = {
     };
 
     // Calculate discount percent if not provided
-    if (newProduct.original_price && newProduct.original_price > newProduct.price) {
-      newProduct.discount_percent = Math.round(
-        ((newProduct.original_price - newProduct.price) / newProduct.original_price) * 100
+    if (newProduct.originalPrice && newProduct.originalPrice > newProduct.price) {
+      newProduct.discountPercent = Math.round(
+        ((newProduct.originalPrice - newProduct.price) / newProduct.originalPrice) * 100
       );
     }
 
@@ -152,9 +152,9 @@ export const db = {
   },
 
   async updateProduct(id: string, updates: Partial<Product>) {
-    if (updates.original_price && updates.original_price > updates.price) {
-      updates.discount_percent = Math.round(
-        ((updates.original_price - updates.price) / updates.original_price) * 100
+    if (updates.originalPrice && updates.originalPrice > updates.price) {
+      updates.discountPercent = Math.round(
+        ((updates.originalPrice - updates.price) / updates.originalPrice) * 100
       );
     }
 
@@ -511,7 +511,7 @@ export const db = {
     if (error) throw error;
 
     // Update product rating
-    const prod = await this.getProductById(newReview.product_id);
+    const prod = await this.getProductById(newReview.productId);
     if (prod) {
       const { data: prodReviews } = await supabase
         .from('reviews')
@@ -558,6 +558,7 @@ export const db = {
       currencySymbol: data.currency_symbol,
       announcementText: data.announcement_text,
       isOpen24Hours: data.is_open_24_hours,
+      adminPin: data.admin_pin || '1234',
     };
   },
 
@@ -577,8 +578,9 @@ export const db = {
     if (settings.estimatedDeliveryMinMinutes !== undefined) updates.estimated_delivery_min_minutes = settings.estimatedDeliveryMinMinutes;
     if (settings.estimatedDeliveryMaxMinutes !== undefined) updates.estimated_delivery_max_minutes = settings.estimatedDeliveryMaxMinutes;
     if (settings.currencySymbol !== undefined) updates.currency_symbol = settings.currencySymbol;
-    if (settings.announcementText !== undefined) updates.announcement_text = settings.announcement_text;
+    if (settings.announcementText !== undefined) updates.announcement_text = settings.announcementText;
     if (settings.isOpen24Hours !== undefined) updates.is_open_24_hours = settings.isOpen24Hours;
+    if (settings.adminPin !== undefined) updates.admin_pin = settings.adminPin;
 
     const { data, error } = await supabase
       .from('store_settings')
@@ -603,6 +605,7 @@ export const db = {
       currencySymbol: data.currency_symbol,
       announcementText: data.announcement_text,
       isOpen24Hours: data.is_open_24_hours,
+      adminPin: data.admin_pin || '1234',
     };
   },
 

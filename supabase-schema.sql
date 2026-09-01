@@ -140,6 +140,7 @@ CREATE TABLE store_settings (
   currency_symbol TEXT DEFAULT '$',
   announcement_text TEXT,
   is_open_24_hours BOOLEAN DEFAULT TRUE,
+  admin_pin TEXT DEFAULT '1234',
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

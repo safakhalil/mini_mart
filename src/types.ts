@@ -226,6 +226,7 @@ export interface StoreSettings {
   currencySymbol: string;
   announcementText: string;
   isOpen24Hours?: boolean;
+  adminPin: string;
 }
 
 export interface FAQItem {
