@@ -68,6 +68,8 @@ vercel
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`: Your Supabase publishable key
    - `SUPABASE_ANON_KEY`: Your Supabase anon key
    - `GEMINI_API_KEY`: Your Gemini API key (optional)
+   - `VITE_ADMIN_SECRET_KEY`: Your admin secret key (default: BK-ADMIN-SECRET-2024)
+   - `ADMIN_SECRET_KEY`: Server-side admin secret key (should match VITE_ADMIN_SECRET_KEY)
 5. Click "Deploy"
 
 ## Step 3: Configure Environment Variables in Vercel
@@ -83,6 +85,8 @@ NEXT_PUBLIC_SUPABASE_URL=https://jvepencwvugjszxvsmgh.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_4qmEAAKSqK2JkCVvTaq2RQ_kFPZz2Zn
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZXBlbmN3dnVnanN6eHZzbWdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1NzY3NjAsImV4cCI6MjEwMzE1Mjc2MH0.FO0f-ngsAY1B-ieFe_tx8SljJKnmKlw8dUmJEjRl5gs
 GEMINI_API_KEY=your_gemini_api_key_here
+VITE_ADMIN_SECRET_KEY=BK-ADMIN-SECRET-2024
+ADMIN_SECRET_KEY=BK-ADMIN-SECRET-2024
 ```
 
 ## Step 4: Optional - Set Up Supabase Database
@@ -127,4 +131,8 @@ Once deployed:
 1. Test the application at the provided Vercel URL
 2. Check that all API endpoints work correctly
 3. Verify Supabase connection (if configured)
-4. Test the admin dashboard (admin@247mart.com / admin123)
+4. Test the admin authentication:
+   - Navigate to `YOUR_URL/?admin=true` to access admin login
+   - Enter the admin secret key configured in environment variables
+   - Default secret key: `BK-ADMIN-SECRET-2024`
+   - Alternatively, use `YOUR_URL/?secret=BK-ADMIN-SECRET-2024` for direct access
