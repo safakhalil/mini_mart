@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import { Product } from './types';
 
@@ -23,6 +23,11 @@ import { OrderTrackingPage } from './components/customer/OrderTrackingPage';
 import { CustomerAccountPage } from './components/customer/CustomerAccountPage';
 import { WishlistPage } from './components/customer/WishlistPage';
 
+// Admin
+import { AdminRoute } from './components/admin/AdminRoute';
+import { AdminLoginPage } from './components/admin/AdminLoginPage';
+import { AdminDashboard } from './components/admin/AdminDashboard';
+
 const MainApp: React.FC = () => {
   const { orders } = useStore();
 
@@ -40,6 +45,18 @@ const MainApp: React.FC = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+
+  // Check for admin access via URL parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminParam = urlParams.get('admin');
+    
+    if (adminParam === 'true') {
+      setShowAdminLogin(true);
+    }
+  }, []);
 
   // Navigation helpers
   const navigateTo = (route: string, params: typeof routeParams = {}) => {
@@ -64,7 +81,34 @@ const MainApp: React.FC = () => {
     navigateTo('order-confirmation', { orderId });
   };
 
+  const handleAdminAccess = () => {
+    setShowAdminLogin(true);
+  };
 
+  const handleAdminLoginSuccess = () => {
+    setIsAdminAuthenticated(true);
+    setShowAdminLogin(false);
+    navigateTo('admin');
+  };
+
+  const handleAdminLoginCancel = () => {
+    setShowAdminLogin(false);
+    navigateTo('home');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminAuthenticated(false);
+    sessionStorage.removeItem('adminAuthenticated');
+    sessionStorage.removeItem('adminAuthTimestamp');
+    navigateTo('home');
+  };
+
+
+
+  // Show admin login if needed
+  if (showAdminLogin && !isAdminAuthenticated) {
+    return <AdminLoginPage onLoginSuccess={handleAdminLoginSuccess} onCancel={handleAdminLoginCancel} />;
+  }
 
   // Customer Experience
   return (
@@ -75,7 +119,7 @@ const MainApp: React.FC = () => {
       {/* Main Navbar */}
       <Navbar
         currentRoute={currentRoute}
-        onNavigate={navigateTo}
+        onNavigate={(route, param) => navigateTo(route, param)}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenLocation={() => setIsLocationOpen(true)}
@@ -157,6 +201,15 @@ const MainApp: React.FC = () => {
             onSelectProduct={handleSelectProduct}
             onNavigateShop={() => navigateTo('shop')}
           />
+        )}
+
+        {currentRoute === 'admin' && isAdminAuthenticated && (
+          <AdminRoute>
+            <AdminDashboard 
+              onNavigate={navigateTo}
+              onLogout={handleAdminLogout}
+            />
+          </AdminRoute>
         )}
       </main>
 
